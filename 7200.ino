@@ -9,7 +9,7 @@
 
 const int red = 3;
 const int green = 5;
-const int blue= 6;
+const int blue = 6;
 
 int sendymabob[2];
 
@@ -21,7 +21,7 @@ Servo tiltServo;
 
 int p;
 
-
+int rainbowMode;
 
 
 void setup() {
@@ -51,7 +51,7 @@ void loop() {
 
 
 
-//digitalWrite(led, HIGH);
+  //digitalWrite(led, HIGH);
 
 
   int xMove = pixy.ccc.blocks[x].m_x;
@@ -65,83 +65,104 @@ void loop() {
 
 
 
-  
-    int value = Wire.read();
-    
-Serial.println(value);
 
-    if (value == 0) {
-      digitalWrite(red, HIGH);
-    }
-    if (value == 1) {
-      digitalWrite(red, LOW);
-    }
+  int value = Wire.read();
 
-       if (value == 2) {
-      digitalWrite(green, HIGH);
-    }
-    if (value == 3) {
-      digitalWrite(green, LOW);
-    }
+  Serial.println(value);
 
-    if (value == 4) {
-      digitalWrite(blue, HIGH);
-    }
-    if (value == 5) {
-      digitalWrite(blue, LOW);
-    }
+  if (value == 0) {
+    digitalWrite(red, HIGH);
+  }
+  if (value == 1) {
+    digitalWrite(red, LOW);
+  }
 
-    if (value == 6) {
-      for (int i = 0; i < 256; i++) {
-        analogWrite(red, 255 - i);
-        analogWrite(green, i);
-        delay(25);
-      }
-      for (int i = 0; i < 256; i++) {
-        analogWrite(green, 255 - i);
-        analogWrite(blue, i);
-        delay(25);
-      }
-      for (int i = 0; i < 256; i++) {
-        analogWrite(blue, 255 - i);
-        analogWrite(red, i);
-        delay(25);
-      }
-      digitalWrite(red, LOW);
-      digitalWrite(green, LOW);
-      digitalWrite(blue, LOW);
-    }
-  
+  if (value == 2) {
+    rainbowMode = 1;
+  }
+  if (value == 3) {
+    rainbowMode = 0;
+  }
+
+  if (value == 4) {
+    digitalWrite(blue, HIGH);
+  }
+  if (value == 5) {
+    digitalWrite(blue, LOW);
+  }
+
   if (blocks == 1) {
     angleDif = map(xMove, 0, 316, -autoGain, autoGain);
 
-sendymabob[0] = angleDif;
-sendymabob[1] = 1;
+    sendymabob[0] = angleDif;
+    sendymabob[1] = 1;
 
-    
+
 
   }
 
   else {
 
     sendymabob[1] = 0;
-    
-//Serial.println("no ball");
+
+    //Serial.println("no ball");
   }
+
+  int rValue = 255;
+  int gValue = 0;
+  int bValue = 0;
+
+  int stage1 = 1;
+  int stage2 = 0;
+  int stage3 = 0;
+
+  if (rainbowMode == 1) {
+    if (stage1 == 1) {
+      analogWrite(red, rValue);
+      analogWrite(green, gValue);
+                  rValue--;
+                  gValue++;
+      if (rValue <= 0 && gValue == 255) {
+      stage1 = 0;
+      stage2 = 1;
+    }
+  }
+  else if (stage2 == 1) {
+      analogWrite(green, gValue);
+      analogWrite(blue, bValue);
+                  gValue--;
+                  bValue++;
+      if (gValue <= 0 && bValue == 255) {
+      stage2 = 0;
+      stage3 = 1;
+    }
+  }
+  else if (stage3 == 1) {
+      analogWrite(blue, bValue);
+      analogWrite(red, rValue);
+                  bValue--;
+                  rValue++;
+      if (bValue <= 0 && rValue == 255) {
+      stage3 = 0;
+      stage1 = 1;
+    }
+  }
+}
+
 }
 void gotRate() {
   if (Wire.available()) {
 
-   int value = Wire.read();
+    int value = Wire.read();
 
-     delay(2);
+    delay(2);
 
 
   }
 }
 
-  void requestEvent() {
+void requestEvent() {
   Wire.write(sendymabob[0]);
   Wire.write(sendymabob[1]);// respond with message of 6 bytes
   // as expected by master
-  }
+}
