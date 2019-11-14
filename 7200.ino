@@ -7,9 +7,9 @@
 
 
 
-const int red = 2;
-const int green = 3;
-const int blue= 4;
+const int red = 3;
+const int green = 5;
+const int blue= 6;
 
 int sendymabob[2];
 
@@ -84,11 +84,31 @@ Serial.println(value);
       digitalWrite(green, LOW);
     }
 
-
-       if (value == 4) {
+    if (value == 4) {
       digitalWrite(blue, HIGH);
     }
     if (value == 5) {
+      digitalWrite(blue, LOW);
+    }
+
+    if (value == 6) {
+      for (int i = 0; i < 256; i++) {
+        analogWrite(red, 255 - i);
+        analogWrite(green, i);
+        delay(25);
+      }
+      for (int i = 0; i < 256; i++) {
+        analogWrite(green, 255 - i);
+        analogWrite(blue, i);
+        delay(25);
+      }
+      for (int i = 0; i < 256; i++) {
+        analogWrite(blue, 255 - i);
+        analogWrite(red, i);
+        delay(25);
+      }
+      digitalWrite(red, LOW);
+      digitalWrite(green, LOW);
       digitalWrite(blue, LOW);
     }
   
