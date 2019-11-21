@@ -4,7 +4,13 @@
 #include <Wire.h>
 
 
+  int rValue = 255;
+  int gValue = 0;
+  int bValue = 0;
 
+  int stage1 = 1;
+  int stage2 = 0;
+  int stage3 = 0;
 
 
 const int red = 3;
@@ -108,13 +114,7 @@ void loop() {
     //Serial.println("no ball");
   }
 
-  int rValue = 255;
-  int gValue = 0;
-  int bValue = 0;
 
-  int stage1 = 1;
-  int stage2 = 0;
-  int stage3 = 0;
 
   if (rainbowMode == 1) {
     if (stage1 == 1) {
